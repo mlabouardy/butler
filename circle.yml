@@ -34,20 +34,20 @@ jobs:
 
       - run:
           name: Push Linux binary
-          command: aws s3 cp butler_linux_amd64 s3://butlercli/1.0.0/linux/butler
+          command: aws s3 cp butler_linux_amd64 s3://butlercli/1.0.0/linux/butler --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
       - run:
           name: Push Windows binary
-          command: aws s3 cp butler_windows_amd64.exe s3://butlercli/1.0.0/windows/butler
+          command: aws s3 cp butler_windows_amd64.exe s3://butlercli/1.0.0/windows/butler --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
       - run:
           name: Push Mac OS X binary
-          command: aws s3 cp butler_darwin_amd64 s3://butlercli/1.0.0/osx/butler
+          command: aws s3 cp butler_darwin_amd64 s3://butlercli/1.0.0/osx/butler --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
       - run:
           name: Push OpenBSD binary
-          command: aws s3 cp butler_openbsd_amd64 s3://butlercli/1.0.0/openbsd/butler
+          command: aws s3 cp butler_openbsd_amd64 s3://butlercli/1.0.0/openbsd/butler --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
       - run:
           name: Push FreeBSD binary
-          command: aws s3 cp butler_freebsd_amd64 s3://butlercli/1.0.0/freebsd/butler
+          command: aws s3 cp butler_freebsd_amd64 s3://butlercli/1.0.0/freebsd/butler --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
