@@ -78,4 +78,4 @@ $ butler plugins export --server localhost:8080 --username admin --password admi
 
 ## Tutorials
 
-* [Butler CLI: Import/Export Jenkins Plugins & Jobs]()
+* [Butler CLI: Import/Export Jenkins Plugins & Jobs](http://www.blog.labouardy.com/butler-cli-import-export-jenkins-plugins-jobs/)
