@@ -29,11 +29,7 @@ jobs:
           name: Install AWS CLI
           working_directory: /
           command: |
-            apt-get -y -qq update
-            apt-get -y -qq install python3.4-dev
-            curl -O https://bootstrap.pypa.io/get-pip.py
-            python3.4 get-pip.py --user
-            pip3 install awscli --upgrade --user
+            apt-get install -y python-pip python-dev awscli
 
       - run:
           name: Push Linux binary
