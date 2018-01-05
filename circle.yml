@@ -29,7 +29,7 @@ jobs:
           name: Install AWS CLI
           working_directory: /
           command: |
-            apt-get install -y python-pip python-dev awscli
+            apt-get install -y awscli
 
       - run:
           name: Push Linux binary
