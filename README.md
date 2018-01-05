@@ -19,31 +19,31 @@ Below are the available downloads for the latest version of Butler (1.0.0). Plea
 ### Linux:
 
 ```
-wget https://s3.eu-west-2.amazonaws.com/butler/1.0.0/linux/butler
+wget https://s3.us-east-1.amazonaws.com/butlercli/1.0.0/linux/butler
 ```
 
 ### Windows:
 
 ```
-wget https://s3.eu-west-2.amazonaws.com/butler/1.0.0/windows/butler
+wget https://s3.us-east-1.amazonaws.com/butlercli/1.0.0/windows/butler
 ```
 
 ### Mac OS X:
 
 ```
-wget https://s3.eu-west-2.amazonaws.com/butler/1.0.0/osx/butler
+wget https://s3.us-east-1.amazonaws.com/butlercli/1.0.0/osx/butler
 ```
 
 ### OpenBSD:
 
 ```
-wget https://s3.eu-west-2.amazonaws.com/butler/1.0.0/openbsd/butler
+wget https://s3.us-east-1.amazonaws.com/butlercli/1.0.0/openbsd/butler
 ```
 
 ### FreeBSD:
 
 ```
-wget https://s3.eu-west-2.amazonaws.com/butler/1.0.0-beta/freebsd/butler
+wget https://s3.us-east-1.amazonaws.com/butlercli/1.0.0/freebsd/butler
 ```
 
 ## Installation
@@ -78,4 +78,4 @@ $ butler plugins export --server localhost:8080 --username admin --password admi
 
 ## Tutorials
 
-* []()
+* [Butler CLI: Import/Export Jenkins Plugins & Jobs]()

@@ -16,3 +16,35 @@ jobs:
       - run:
           name: Run Unit Tests
           command: go test
+
+      - run:
+          name: Install gox
+          command: go get github.com/mitchellh/gox
+
+      - run:
+          name: Build multiple platforms
+          command: gox
+
+      - run:
+          name: Install AWS CLI
+          command:
+
+      - run:
+          name: Push Linux binary
+          command: aws s3 cp butler_linux_amd64 s3://butlercli/1.0.0/linux/butler
+
+      - run:
+          name: Push Windows binary
+          command: aws s3 cp butler_windows_amd64.exe s3://butlercli/1.0.0/windows/butler
+
+      - run:
+          name: Push Mac OS X binary
+          command: aws s3 cp butler_darwin_amd64 s3://butlercli/1.0.0/osx/butler
+
+      - run:
+          name: Push OpenBSD binary
+          command: aws s3 cp butler_openbsd_amd64 s3://butlercli/1.0.0/openbsd/butler
+
+      - run:
+          name: Push FreeBSD binary
+          command: aws s3 cp butler_freebsd_amd64 s3://butlercli/1.0.0/freebsd/butler
