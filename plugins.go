@@ -109,8 +109,6 @@ func ImportPlugins(server string, username string, password string) error {
 		}
 		defer resp.Body.Close()
 
-		fmt.Println(resp.StatusCode)
-
 		if resp.StatusCode == 401 {
 			return errors.New("Unauthorized 401")
 		}
