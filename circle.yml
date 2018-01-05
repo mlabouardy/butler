@@ -29,6 +29,7 @@ jobs:
           name: Install AWS CLI
           working_directory: /
           command: |
+            apt-get update
             apt-get install -y awscli
 
       - run:
