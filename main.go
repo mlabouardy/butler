@@ -44,7 +44,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = c.String("server")
+						var server = GetSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -80,7 +80,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = c.String("server")
+						var server = GetSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -121,7 +121,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = c.String("server")
+						var server = GetSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -157,7 +157,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = c.String("server")
+						var server = GetSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -180,4 +180,12 @@ func main() {
 		fmt.Fprintf(c.App.Writer, "Command not found %q !", command)
 	}
 	app.Run(os.Args)
+}
+
+func GetSanitizedUrl(url string) string {
+	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
+		url = "http://" + url
+	}
+
+	return url
 }
