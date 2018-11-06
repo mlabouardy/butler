@@ -56,6 +56,11 @@ go get -u github.com/mlabouardy/butler
 
 ## Available Commands
 
+### Generic environment variables
+
+Username flag may also be provided via environment variable `JENKINS_USER` and the password via `JENKINS_PASSWORD`.
+In order to always skip folders, you may set the environment variable `JENKINS_SKIP_FOLDER`.
+
 ### Jobs Management
 
 ```
