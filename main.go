@@ -79,17 +79,22 @@ func main() {
 							Name:  "password, p",
 							Usage: "Jenkins password",
 						},
+						cli.BoolFlag{
+							Name:  "skip-folder, sf",
+							Usage: "Skip folder",
+						},
 					},
 					Action: func(c *cli.Context) error {
 						var server = getSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
+						var skipFolder = c.Bool("skip-folder")
 
 						if server == "" {
 							cli.ShowSubcommandHelp(c)
 						}
 
-						err := ExportJobs(server, username, password)
+						err := ExportJobs(server, username, password, skipFolder)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}

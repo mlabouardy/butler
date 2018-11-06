@@ -59,7 +59,7 @@ go get -u github.com/mlabouardy/butler
 ### Jobs Management
 
 ```
-$ butler jobs export --server localhost:8080 --username admin --password admin
+$ butler jobs export --server localhost:8080 --username admin --password admin --skip-folder
 ```
 
 ```
