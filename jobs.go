@@ -86,7 +86,7 @@ func ExportJob(job Job, username string, password string) error {
 }
 
 func GetJobs(server string, username string, password string) ([]Job, error) {
-	url := fmt.Sprintf("http://%s/view/all/api/xml", server)
+	url := fmt.Sprintf("%s/view/all/api/xml", server)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -117,7 +117,7 @@ func GetJobs(server string, username string, password string) ([]Job, error) {
 }
 
 func GetCrumb(host string, username string, password string) ([]string, error) {
-	crumbUrl := `http://%s/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)`
+	crumbUrl := `%s/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)`
 	url := fmt.Sprintf(crumbUrl, host)
 
 	client := &http.Client{}
@@ -168,7 +168,7 @@ func ImportJob(name string, server string, username string, password string) err
 		return err
 	}
 
-	url := fmt.Sprintf("http://%s/createItem?name=%s", server, name)
+	url := fmt.Sprintf("%s/createItem?name=%s", server, name)
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
