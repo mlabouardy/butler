@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli"
@@ -44,7 +45,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = GetSanitizedUrl(c.String("server"))
+						var server = getSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -80,7 +81,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = GetSanitizedUrl(c.String("server"))
+						var server = getSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -121,7 +122,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = GetSanitizedUrl(c.String("server"))
+						var server = getSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -157,7 +158,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						var server = GetSanitizedUrl(c.String("server"))
+						var server = getSanitizedUrl(c.String("server"))
 						var username = c.String("username")
 						var password = c.String("password")
 
@@ -182,7 +183,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func GetSanitizedUrl(url string) string {
+func getSanitizedUrl(url string) string {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "http://" + url
 	}
