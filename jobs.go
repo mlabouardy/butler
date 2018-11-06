@@ -18,8 +18,13 @@ type AllView struct {
 
 type Job struct {
 	XMLName xml.Name `xml:"job"`
+	Class   string   `xml:"_class,attr"`
 	Name    string   `xml:"name"`
 	URL     string   `xml:"url"`
+}
+
+func (job *Job) IsFolder() bool {
+	return strings.HasSuffix(job.Class, "Folder")
 }
 
 func ExportJobs(server string, username string, password string) error {
@@ -82,6 +87,7 @@ func ExportJob(job Job, username string, password string) error {
 	defer f.Close()
 
 	fmt.Fprintf(f, "%s", data)
+	fmt.Printf("Job %s is class %s", job.Name, job.Class)
 	return nil
 }
 
@@ -112,7 +118,6 @@ func GetJobs(server string, username string, password string) ([]Job, error) {
 
 	var view AllView
 	xml.Unmarshal(data, &view)
-
 	return view.Jobs, nil
 }
 
