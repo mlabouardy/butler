@@ -20,6 +20,10 @@ func main() {
 			Name:  "Mohamed Labouardy",
 			Email: "mohamed@labouardy.com",
 		},
+		cli.Author{
+			Name:  "Dominik Schröter",
+			Email: "dominik.schroeter@bmw.de",
+		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -36,12 +40,14 @@ func main() {
 							Usage: "Jenkins server",
 						},
 						cli.StringFlag{
-							Name:  "username, u",
-							Usage: "Jenkins username",
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
 						},
 						cli.StringFlag{
-							Name:  "password, p",
-							Usage: "Jenkins password",
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
 						},
 					},
 					Action: func(c *cli.Context) error {
@@ -72,16 +78,19 @@ func main() {
 							Usage: "Jenkins server",
 						},
 						cli.StringFlag{
-							Name:  "username, u",
-							Usage: "Jenkins username",
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
 						},
 						cli.StringFlag{
-							Name:  "password, p",
-							Usage: "Jenkins password",
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
 						},
 						cli.BoolFlag{
-							Name:  "skip-folder, sf",
-							Usage: "Skip folder",
+							Name:   "skip-folder, sf",
+							Usage:  "Skip folder",
+							EnvVar: "JENKINS_SKIP_FOLDER",
 						},
 					},
 					Action: func(c *cli.Context) error {
@@ -118,12 +127,14 @@ func main() {
 							Usage: "Jenkins server",
 						},
 						cli.StringFlag{
-							Name:  "username, u",
-							Usage: "Jenkins username",
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
 						},
 						cli.StringFlag{
-							Name:  "password, p",
-							Usage: "Jenkins password",
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
 						},
 					},
 					Action: func(c *cli.Context) error {
@@ -154,12 +165,14 @@ func main() {
 							Usage: "Jenkins server",
 						},
 						cli.StringFlag{
-							Name:  "username, u",
-							Usage: "Jenkins username",
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
 						},
 						cli.StringFlag{
-							Name:  "password, p",
-							Usage: "Jenkins password",
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
 						},
 					},
 					Action: func(c *cli.Context) error {
