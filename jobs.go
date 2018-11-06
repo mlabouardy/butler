@@ -27,8 +27,8 @@ func (job *Job) IsFolder() bool {
 	return strings.HasSuffix(job.Class, "Folder")
 }
 
-func ExportJobs(server string, username string, password string) error {
-	jobs, err := GetJobs(server, username, password)
+func ExportJobs(server string, username string, password string, skipFolder bool) error {
+	jobs, err := GetJobs(server, username, password, skipFolder)
 	if err != nil {
 		return err
 	}
@@ -87,11 +87,13 @@ func ExportJob(job Job, username string, password string) error {
 	defer f.Close()
 
 	fmt.Fprintf(f, "%s", data)
-	fmt.Printf("Job %s is class %s", job.Name, job.Class)
+	if job.IsFolder() {
+		fmt.Printf("\tJob is a folder.\n")
+	}
 	return nil
 }
 
-func GetJobs(server string, username string, password string) ([]Job, error) {
+func GetJobs(server string, username string, password string, skipFolder bool) ([]Job, error) {
 	url := fmt.Sprintf("%s/view/all/api/xml", server)
 
 	client := &http.Client{}
@@ -118,7 +120,22 @@ func GetJobs(server string, username string, password string) ([]Job, error) {
 
 	var view AllView
 	xml.Unmarshal(data, &view)
+
+	if skipFolder {
+		view.Jobs = filterOutFolders(view.Jobs)
+	}
+
 	return view.Jobs, nil
+}
+
+func filterOutFolders(unfiltered []Job) []Job {
+	filtered := make([]Job, 0)
+	for _, job := range unfiltered {
+		if !job.IsFolder() {
+			filtered = append(filtered, job)
+		}
+	}
+	return filtered
 }
 
 func GetCrumb(host string, username string, password string) ([]string, error) {
