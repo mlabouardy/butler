@@ -13,7 +13,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "butler"
 	app.Usage = "Import/Export Jenkins Jobs"
-	app.Version = "1.0.0"
+	app.Version = "1.1.0"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -61,6 +61,98 @@ func main() {
 						}
 
 						err := ImportJobs(server, username, password)
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
+						return nil
+					},
+				},
+				{
+					Name:    "export",
+					Usage:   "Export Jenkins Jobs",
+					Aliases: []string{"e"},
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "server, s",
+							Usage: "Jenkins server",
+						},
+						cli.StringFlag{
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
+						},
+						cli.StringFlag{
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
+						},
+						cli.BoolFlag{
+							Name:   "skip-folder, sf",
+							Usage:  "Skip folder",
+							EnvVar: "JENKINS_SKIP_FOLDER",
+						},
+					},
+					Action: func(c *cli.Context) error {
+						var server = getSanitizedUrl(c.String("server"))
+						var username = c.String("username")
+						var password = c.String("password")
+						var skipFolder = c.Bool("skip-folder")
+
+						if server == "" {
+							cli.ShowSubcommandHelp(c)
+						}
+
+						err := ExportJobs(server, username, password, skipFolder)
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
+						return nil
+					},
+				},
+			},
+		},
+		{
+			Name:  "credentials",
+			Usage: "Jenkins Credential Management",
+			Subcommands: []cli.Command{
+				{
+					Name:    "decrypt",
+					Usage:   "Decrypt credentials of Jenkins folder",
+					Aliases: []string{"d"},
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "server",
+							Usage: "Jenkins url",
+						},
+						cli.StringFlag{
+							Name:  "folder",
+							Usage: "Jenkins Folder",
+						},
+						cli.StringFlag{
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
+						},
+						cli.StringFlag{
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
+						},
+					},
+					Action: func(c *cli.Context) error {
+						var url = getSanitizedUrl(c.String("server"))
+						var username = c.String("username")
+						var password = c.String("password")
+						var folder = c.String("folder")
+
+						if url == "" || folder == "" {
+							cli.ShowSubcommandHelp(c)
+							return nil
+						}
+
+						err := DecryptFolder(url, folder, username, password)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
