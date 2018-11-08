@@ -159,6 +159,10 @@ func GetCrumb(host string, username string, password string) ([]string, error) {
 		return []string{}, errors.New("Unauthorized 401")
 	}
 
+	if resp.StatusCode == 404 {
+		return []string{}, errors.New("Not found 404")
+	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return []string{}, err

@@ -127,7 +127,7 @@ func main() {
 							Usage: "Jenkins url",
 						},
 						cli.StringFlag{
-							Name:  "folder",
+							Name:  "folder, f",
 							Usage: "Jenkins Folder",
 						},
 						cli.StringFlag{
@@ -153,49 +153,6 @@ func main() {
 						}
 
 						err := DecryptFolder(url, folder, username, password)
-						if err != nil {
-							return cli.NewExitError(err.Error(), 1)
-						}
-
-						return nil
-					},
-				},
-				{
-					Name:    "export",
-					Usage:   "Export Jenkins Jobs",
-					Aliases: []string{"e"},
-					Flags: []cli.Flag{
-						cli.StringFlag{
-							Name:  "server, s",
-							Usage: "Jenkins server",
-						},
-						cli.StringFlag{
-							Name:   "username, u",
-							Usage:  "Jenkins username",
-							EnvVar: "JENKINS_USER",
-						},
-						cli.StringFlag{
-							Name:   "password, p",
-							Usage:  "Jenkins password",
-							EnvVar: "JENKINS_PASSWORD",
-						},
-						cli.BoolFlag{
-							Name:   "skip-folder, sf",
-							Usage:  "Skip folder",
-							EnvVar: "JENKINS_SKIP_FOLDER",
-						},
-					},
-					Action: func(c *cli.Context) error {
-						var server = getSanitizedUrl(c.String("server"))
-						var username = c.String("username")
-						var password = c.String("password")
-						var skipFolder = c.Bool("skip-folder")
-
-						if server == "" {
-							cli.ShowSubcommandHelp(c)
-						}
-
-						err := ExportJobs(server, username, password, skipFolder)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
@@ -297,6 +254,7 @@ func getSanitizedUrl(url string) string {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "http://" + url
 	}
+	url = strings.TrimRight(url, "/")
 
 	return url
 }
