@@ -59,21 +59,21 @@ go get -u github.com/mlabouardy/butler
 ### Jobs Management
 
 ```
-$ butler jobs export --server localhost:8080 --username admin --password admin
+$ butler jobs export --server http://localhost:8080 --username admin --password admin
 ```
 
 ```
-$ butler jobs import --server localhost:8080 --username admin --password admin
+$ butler jobs import --server http://localhost:8080 --username admin --password admin
 ```
 
 ### Plugins Management
 
 ```
-$ butler plugins export --server localhost:8080 --username admin --password admin
+$ butler plugins export --server http://localhost:8080 --username admin --password admin
 ```
 
 ```
-$ butler plugins import --server localhost:8080 --username admin --password admin
+$ butler plugins import --server http://localhost:8080 --username admin --password admin
 ```
 
 ## Tutorials

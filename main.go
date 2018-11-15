@@ -3,16 +3,24 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli"
 )
 
+func ensureProtocol(server string) string {
+	if strings.HasPrefix(server, "http://") || strings.HasPrefix(server, "https://") {
+		return server
+	}
+	return fmt.Sprintf("http://%s", server)
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "butler"
 	app.Usage = "Import/Export Jenkins Jobs"
-	app.Version = "1.0.0"
+	app.Version = "1.0.1"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -53,7 +61,7 @@ func main() {
 							return nil
 						}
 
-						err := ImportJobs(server, username, password)
+						err := ImportJobs(ensureProtocol(server), username, password)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
@@ -88,7 +96,7 @@ func main() {
 							cli.ShowSubcommandHelp(c)
 						}
 
-						err := ExportJobs(server, username, password)
+						err := ExportJobs(ensureProtocol(server), username, password)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
@@ -130,7 +138,7 @@ func main() {
 							return nil
 						}
 
-						err := ImportPlugins(server, username, password)
+						err := ImportPlugins(ensureProtocol(server), username, password)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
@@ -165,7 +173,7 @@ func main() {
 							cli.ShowSubcommandHelp(c)
 						}
 
-						err := ExportPlugins(server, username, password)
+						err := ExportPlugins(ensureProtocol(server), username, password)
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
