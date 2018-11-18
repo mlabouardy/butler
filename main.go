@@ -202,7 +202,7 @@ func main() {
 }
 
 func getSanitizedUrl(url string) string {
-	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
+	if url != "" && !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "http://" + url
 	}
 
