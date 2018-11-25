@@ -12,23 +12,21 @@ import (
 )
 
 type AllView struct {
-	XMLName xml.Name `xml:"allView"`
-	Jobs    []Job    `xml:"job"`
+	Jobs []Job `xml:"job"`
 }
 
 type Job struct {
-	XMLName xml.Name `xml:"job"`
-	Class   string   `xml:"_class,attr"`
-	Name    string   `xml:"name"`
-	URL     string   `xml:"url"`
+	Class string `xml:"_class,attr"`
+	Name  string `xml:"name"`
+	URL   string `xml:"url"`
 }
 
 func (job *Job) IsFolder() bool {
 	return strings.HasSuffix(job.Class, "Folder")
 }
 
-func ExportJobs(server string, username string, password string, skipFolder bool) error {
-	jobs, err := GetJobs(server, username, password, skipFolder)
+func ExportJobs(server string, folderName string, username string, password string, skipFolder bool) error {
+	jobs, err := GetJobs(server, folderName, username, password, skipFolder)
 	if err != nil {
 		return err
 	}
@@ -93,8 +91,8 @@ func ExportJob(job Job, username string, password string) error {
 	return nil
 }
 
-func GetJobs(server string, username string, password string, skipFolder bool) ([]Job, error) {
-	url := fmt.Sprintf("%s/view/all/api/xml", server)
+func GetJobs(urlToServer string, folderName string, username string, password string, skipFolder bool) ([]Job, error) {
+	url := fmt.Sprintf("%s/api/xml", GetFolderURL(urlToServer, folderName))
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -159,6 +157,10 @@ func GetCrumb(host string, username string, password string) ([]string, error) {
 		return []string{}, errors.New("Unauthorized 401")
 	}
 
+	if resp.StatusCode == 404 {
+		return []string{}, errors.New("Not found 404")
+	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return []string{}, err
@@ -167,7 +169,7 @@ func GetCrumb(host string, username string, password string) ([]string, error) {
 	return strings.Split(string(data), ":"), nil
 }
 
-func ImportJobs(server string, username string, password string) error {
+func ImportJobs(server string, username string, password string, folder string) error {
 	jobs, err := ioutil.ReadDir("jobs")
 	if err != nil {
 		return err
@@ -175,7 +177,7 @@ func ImportJobs(server string, username string, password string) error {
 
 	for _, job := range jobs {
 		fmt.Printf("Import job: %s\n", job.Name())
-		err := ImportJob(job.Name(), server, username, password)
+		err := ImportJob(job.Name(), folder, server, username, password)
 		if err != nil {
 			return err
 		}
@@ -184,13 +186,13 @@ func ImportJobs(server string, username string, password string) error {
 	return nil
 }
 
-func ImportJob(name string, server string, username string, password string) error {
+func ImportJob(name string, folderName string, server string, username string, password string) error {
 	jsonStr, err := ioutil.ReadFile("jobs/" + name + "/config.xml")
 	if err != nil {
 		return err
 	}
 
-	url := fmt.Sprintf("%s/createItem?name=%s", server, name)
+	url := fmt.Sprintf("%s/createItem?name=%s", GetFolderURL(server, folderName), name)
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -218,7 +220,7 @@ func ImportJob(name string, server string, username string, password string) err
 	}
 
 	if resp.StatusCode != 200 {
-		return errors.New("Job couldn't not be imported: verify all plugins used in this job are installed on the target jenkins instance")
+		return errors.New("Job couldn't not be imported: check if it is already existing and verify all plugins used in this job are installed on the target jenkins instance")
 	}
 
 	return nil
