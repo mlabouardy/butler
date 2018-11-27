@@ -124,6 +124,98 @@ func main() {
 			},
 		},
 		{
+			Name:  "credentials",
+			Usage: "Jenkins Credential Management",
+			Subcommands: []cli.Command{
+				{
+					Name:    "decrypt",
+					Usage:   "Decrypt credentials of Jenkins folder",
+					Aliases: []string{"d"},
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "server",
+							Usage: "Jenkins url",
+						},
+						cli.StringFlag{
+							Name:  "folder, f",
+							Usage: "Jenkins Folder",
+						},
+						cli.StringFlag{
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
+						},
+						cli.StringFlag{
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
+						},
+					},
+					Action: func(c *cli.Context) error {
+						var url = getSanitizedUrl(c.String("server"))
+						var username = c.String("username")
+						var password = c.String("password")
+						var folder = c.String("folder")
+
+						if url == "" || folder == "" {
+							cli.ShowSubcommandHelp(c)
+							return nil
+						}
+
+						err := DecryptFolderCredentials(url, folder, username, password)
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
+						return nil
+					},
+				},
+				{
+					Name:    "apply",
+					Usage:   "Apply (from STDIN) credentials of Jenkins folder",
+					Aliases: []string{"a"},
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "server",
+							Usage: "Jenkins url",
+						},
+						cli.StringFlag{
+							Name:  "folder, f",
+							Usage: "Jenkins Folder",
+						},
+						cli.StringFlag{
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
+						},
+						cli.StringFlag{
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
+						},
+					},
+					Action: func(c *cli.Context) error {
+						var url = getSanitizedUrl(c.String("server"))
+						var username = c.String("username")
+						var password = c.String("password")
+						var folder = c.String("folder")
+
+						if url == "" || folder == "" {
+							cli.ShowSubcommandHelp(c)
+							return nil
+						}
+
+						err := ApplyFolderCredentials(url, folder, username, password)
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
+						return nil
+					},
+				},
+			},
+		},
+		{
 			Name:  "plugins",
 			Usage: "Jenkins Plugins Management",
 			Subcommands: []cli.Command{
