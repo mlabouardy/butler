@@ -179,7 +179,7 @@ func ImportJobs(server string, username string, password string, folder string) 
 		fmt.Printf("Import job: %s\n", job.Name())
 		err := ImportJob(job.Name(), folder, server, username, password)
 		if err != nil {
-			return err
+			fmt.Println(err)
 		}
 	}
 
