@@ -36,11 +36,12 @@ type UsernamePasswordCredential struct {
 }
 
 type SecretFileCredential struct {
-	Plugin      string `xml:"plugin,attr"`
-	ID          string `xml:"id" json:"id"`
-	Description string `xml:"description" json:"description"`
-	FileName    string `xml:"fileName" json:"fileName"`
-	SecretBytes string `xml:"secretBytes" json:"secretBytes"`
+	Plugin             string `xml:"plugin,attr"`
+	ID                 string `xml:"id" json:"id"`
+	Description        string `xml:"description" json:"description"`
+	FileName           string `xml:"fileName" json:"fileName"`
+	SecretBytes        string `xml:"secretBytes" json:"secretBytes"`
+	EncodedSecretBytes string `xml:"encodedSecretBytes" json:"encodedSecretBytes"`
 }
 
 func GetFolderURL(url string, folderName string) string {

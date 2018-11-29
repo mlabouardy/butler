@@ -16,7 +16,7 @@ func GetDecryptScriptForCredentials(credentials Credentials) string {
 
 const decryptScriptTemplate = `import groovy.json.JsonSlurperClassic
 import groovy.json.JsonOutput
-
+import java.util.Base64
 
 def json = """<<JSON HERE>>"""
 
@@ -26,7 +26,8 @@ data.userpass.each {
 }
 
 data.secretfile.each {
-	it.secretBytes = new String(com.cloudbees.plugins.credentials.SecretBytes.fromString(it.secretBytes).getPlainData(), "ASCII")
+	it.rawString = new String(com.cloudbees.plugins.credentials.SecretBytes.fromString(it.secretBytes).getPlainData(), "ASCII")
+	it.encodedSecretBytes = new String(Base64.encoder.encode(com.cloudbees.plugins.credentials.SecretBytes.fromString(it.secretBytes).getPlainData()))
 }
 
 println JsonOutput.toJson(data)`
@@ -51,6 +52,8 @@ import org.jenkinsci.plugins.plaincredentials.impl.*
 import org.apache.commons.fileupload.FileItem
 import groovy.json.JsonSlurperClassic
 import groovy.json.JsonOutput
+import java.util.Base64
+
 
 def createOrUpdateCredential(credentialStore, newCredential, existingCredentials) {
     def existingCredential = existingCredentials.find{c -> c.getId() == newCredential.getId()}
@@ -83,7 +86,7 @@ Jenkins.instance.getAllItems(Folder.class)
 		}
 		data.secretfile.each {
 			def rawSecretFile = it
-			fileItem = [ getName: { return rawSecretFile.fileName},  get: { return rawSecretFile.secretBytes.getBytes() } ] as FileItem
+			fileItem = [ getName: { return rawSecretFile.fileName},  get: { return Base64.decoder.decode(rawSecretFile.encodedSecretBytes) } ] as FileItem
 			secretFile = new FileCredentialsImpl(
 				CredentialsScope.GLOBAL,
 				rawSecretFile.id,
