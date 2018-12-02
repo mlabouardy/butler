@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -112,7 +113,7 @@ func ExecuteGroovyScriptOnJenkins(script string, rawUrl string, username string,
 
 	crumb, err := GetCrumb(rawUrl, username, password)
 	if err != nil {
-		fmt.Errorf("No crumb issueing possible: %v", err)
+		fmt.Fprintf(os.Stderr, "No crumb issueing possible: %v", err)
 	} else {
 		req.Header.Set(crumb[0], crumb[1])
 	}
