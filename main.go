@@ -36,8 +36,9 @@ func main() {
 					Aliases: []string{"i"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server, s",
-							Usage: "Jenkins server",
+							Name:   "server, s",
+							Usage:  "Jenkins server",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:   "username, u",
@@ -79,8 +80,9 @@ func main() {
 					Aliases: []string{"e"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server, s",
-							Usage: "Jenkins server",
+							Name:   "server, s",
+							Usage:  "Jenkins server",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:   "username, u",
@@ -127,8 +129,9 @@ func main() {
 					Aliases: []string{"lf"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server, s",
-							Usage: "Jenkins server",
+							Name:   "server, s",
+							Usage:  "Jenkins server",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:   "username, u",
@@ -180,8 +183,9 @@ func main() {
 					Aliases: []string{"d"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server",
-							Usage: "Jenkins url",
+							Name:   "server",
+							Usage:  "Jenkins url",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:  "folder, f",
@@ -223,8 +227,9 @@ func main() {
 					Aliases: []string{"a"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server",
-							Usage: "Jenkins url",
+							Name:   "server",
+							Usage:  "Jenkins url",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:  "folder, f",
@@ -272,8 +277,9 @@ func main() {
 					Aliases: []string{"i"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server, s",
-							Usage: "Jenkins server",
+							Name:   "server, s",
+							Usage:  "Jenkins server",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:   "username, u",
@@ -310,8 +316,9 @@ func main() {
 					Aliases: []string{"e"},
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "server, s",
-							Usage: "Jenkins server",
+							Name:   "server, s",
+							Usage:  "Jenkins server",
+							EnvVar: "JENKINS_SERVER",
 						},
 						cli.StringFlag{
 							Name:   "username, u",
