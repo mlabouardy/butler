@@ -11,24 +11,173 @@ import (
 	"strings"
 )
 
-type AllView struct {
+type JobList struct {
 	Jobs []Job `xml:"job"`
 }
 
+type JenkinsHTTPClient struct {
+	BasicAuthSettings BasicAuthSettings
+}
+
+type BasicAuthSettings struct {
+	Username string
+	Password string
+}
+
 type Job struct {
-	Class string `xml:"_class,attr"`
-	Name  string `xml:"name"`
-	URL   string `xml:"url"`
+	Class      string `xml:"_class,attr"`
+	Name       string `xml:"name"`
+	URL        string `xml:"url"`
+	httpClient *JenkinsHTTPClient
 }
 
 func (job *Job) IsFolder() bool {
 	return strings.HasSuffix(job.Class, "Folder")
 }
 
-func ExportJobs(server string, folderName string, username string, password string, skipFolder bool) error {
-	jobs, err := GetJobs(server, folderName, username, password, skipFolder)
+func (job *Job) GetFolderName() (ret string) {
+
+	path := strings.Split(job.URL, "/job")
+	if len(path) == 1 {
+		return
+	}
+	ret = strings.Join(path[1:], "/")
+	ret = strings.Replace(ret, "//", "/", -1)
+	ret = strings.TrimLeft(ret, "/")
+	ret = strings.TrimRight(ret, "/")
+	return
+}
+
+func (jobList *JobList) GetSubfolders() JobList {
+	var subfolders JobList
+
+	isFolder := func(job Job) bool { return job.IsFolder() }
+	subfolders.Jobs = choose(jobList.Jobs, isFolder)
+	return subfolders
+}
+
+func (jobList *JobList) GetSubfoldersRecursively() (JobList, error) {
+	var subfolders = jobList.GetSubfolders()
+
+	for _, innerfolder := range subfolders.Jobs {
+		allJobsOfInnerFolder, err := innerfolder.GetJobs()
+		if err != nil {
+			return subfolders, err
+		}
+		recursiveSubfolders, err := allJobsOfInnerFolder.GetSubfoldersRecursively()
+		if err != nil {
+			return subfolders, err
+		}
+		subfolders.Jobs = append(subfolders.Jobs, recursiveSubfolders.Jobs...)
+	}
+
+	return subfolders, nil
+}
+
+func (job *Job) GetJobs() (JobList, error) {
+	url := fmt.Sprintf("%s/api/xml", job.URL)
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	req.SetBasicAuth(job.httpClient.BasicAuthSettings.Username, job.httpClient.BasicAuthSettings.Password)
+	if err != nil {
+		return NewJobList(), err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return NewJobList(), err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 401 {
+		return NewJobList(), errors.New("Unauthorized 401")
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return NewJobList(), err
+	}
+
+	var jobList JobList
+	xml.Unmarshal(data, &jobList)
+
+	for i, _ := range jobList.Jobs {
+		jobList.Jobs[i].httpClient = job.httpClient
+	}
+	return jobList, nil
+}
+
+func NewJob(serverUrl string, folderName string, httpClient *JenkinsHTTPClient) Job {
+	return Job{
+		URL:        GetFolderURL(serverUrl, folderName),
+		httpClient: httpClient,
+	}
+}
+
+func (jobList *JobList) WithoutFolders() JobList {
+	isNoFolder := func(job Job) bool { return !job.IsFolder() }
+	return JobList{Jobs: choose(jobList.Jobs, isNoFolder)}
+}
+
+func choose(jobs []Job, test func(Job) bool) (ret []Job) {
+	ret = make([]Job, 0)
+	for _, job := range jobs {
+		if test(job) {
+			ret = append(ret, job)
+		}
+	}
+	return
+}
+
+func NewJobList() JobList {
+	return JobList{Jobs: make([]Job, 0)}
+}
+
+func ListFolders(server string, folderName string, username string, password string, recursive bool) error {
+	httpClient := &JenkinsHTTPClient{
+		BasicAuthSettings: BasicAuthSettings{
+			Username: username,
+			Password: password,
+		},
+	}
+	rootJob := NewJob(server, folderName, httpClient)
+	var jobsList JobList
+	jobsList, err := rootJob.GetJobs()
 	if err != nil {
 		return err
+	}
+
+	jobsList = jobsList.GetSubfolders()
+
+	if recursive {
+		jobsList, err = jobsList.GetSubfoldersRecursively()
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, folder := range jobsList.Jobs {
+		fmt.Println(folder.GetFolderName())
+	}
+	return nil
+}
+
+func ExportJobs(server string, folderName string, username string, password string, skipFolder bool) error {
+	httpClient := &JenkinsHTTPClient{
+		BasicAuthSettings: BasicAuthSettings{
+			Username: username,
+			Password: password,
+		},
+	}
+	rootJob := NewJob(server, folderName, httpClient)
+	jobs, err := rootJob.GetJobs()
+	if err != nil {
+		return err
+	}
+
+	if skipFolder {
+		jobs = jobs.WithoutFolders()
 	}
 
 	var directory = "jobs"
@@ -36,7 +185,7 @@ func ExportJobs(server string, folderName string, username string, password stri
 		os.Mkdir(directory, 0755)
 	}
 
-	for _, job := range jobs {
+	for _, job := range jobs.Jobs {
 		fmt.Printf("Exporting job: %s\n", job.Name)
 		err := ExportJob(job, username, password)
 		if err != nil {
@@ -89,51 +238,6 @@ func ExportJob(job Job, username string, password string) error {
 		fmt.Printf("\tJob is a folder.\n")
 	}
 	return nil
-}
-
-func GetJobs(urlToServer string, folderName string, username string, password string, skipFolder bool) ([]Job, error) {
-	url := fmt.Sprintf("%s/api/xml", GetFolderURL(urlToServer, folderName))
-
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth(username, password)
-	if err != nil {
-		return make([]Job, 0), err
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return make([]Job, 0), err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == 401 {
-		return make([]Job, 0), errors.New("Unauthorized 401")
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return make([]Job, 0), err
-	}
-
-	var view AllView
-	xml.Unmarshal(data, &view)
-
-	if skipFolder {
-		view.Jobs = filterOutFolders(view.Jobs)
-	}
-
-	return view.Jobs, nil
-}
-
-func filterOutFolders(unfiltered []Job) []Job {
-	filtered := make([]Job, 0)
-	for _, job := range unfiltered {
-		if !job.IsFolder() {
-			filtered = append(filtered, job)
-		}
-	}
-	return filtered
 }
 
 func GetCrumb(host string, username string, password string) ([]string, error) {

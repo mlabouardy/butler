@@ -121,6 +121,53 @@ func main() {
 						return nil
 					},
 				},
+				{
+					Name:    "list-folders",
+					Usage:   "Export Jenkins Jobs",
+					Aliases: []string{"lf"},
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "server, s",
+							Usage: "Jenkins server",
+						},
+						cli.StringFlag{
+							Name:   "username, u",
+							Usage:  "Jenkins username",
+							EnvVar: "JENKINS_USER",
+						},
+						cli.StringFlag{
+							Name:  "folder, f",
+							Usage: "Jenkins Folder",
+						},
+						cli.StringFlag{
+							Name:   "password, p",
+							Usage:  "Jenkins password",
+							EnvVar: "JENKINS_PASSWORD",
+						},
+						cli.BoolFlag{
+							Name:  "recursive, r",
+							Usage: "Recursive listing",
+						},
+					},
+					Action: func(c *cli.Context) error {
+						var server = getSanitizedUrl(c.String("server"))
+						var username = c.String("username")
+						var password = c.String("password")
+						var recursive = c.Bool("recursive")
+						var folder = c.String("folder")
+
+						if server == "" {
+							cli.ShowSubcommandHelp(c)
+						}
+
+						err := ListFolders(server, folder, username, password, recursive)
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
+						return nil
+					},
+				},
 			},
 		},
 		{
