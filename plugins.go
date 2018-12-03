@@ -24,7 +24,7 @@ type PluginData struct {
 }
 
 func GetPlugins(server string, username string, password string) ([]Plugin, error) {
-	url := fmt.Sprintf("http://%s/pluginManager/api/json?depth=1", server)
+	url := fmt.Sprintf("%s/pluginManager/api/json?depth=1", server)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -74,7 +74,7 @@ func ExportPlugins(server string, username string, password string) error {
 }
 
 func ImportPlugins(server string, username string, password string) error {
-	url := fmt.Sprintf("http://%s/pluginManager/installNecessaryPlugins", server)
+	url := fmt.Sprintf("%s/pluginManager/installNecessaryPlugins", server)
 	file, err := os.Open("plugins.txt")
 	if err != nil {
 		return err

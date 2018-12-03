@@ -56,26 +56,40 @@ go get -u github.com/mlabouardy/butler
 
 ## Available Commands
 
+### Generic environment variables
+
+Username flag may also be provided via environment variable `JENKINS_USER` and the password via `JENKINS_PASSWORD`.
+In order to always skip folders, you may set the environment variable `JENKINS_SKIP_FOLDER`.
+
 ### Jobs Management
 
 ```
-$ butler jobs export --server localhost:8080 --username admin --password admin
+$ butler jobs export --server localhost:8080 --skip-folder
 ```
 
 ```
-$ butler jobs import --server localhost:8080 --username admin --password admin
+$ butler jobs import --server localhost:8080
 ```
 
 ### Plugins Management
 
 ```
-$ butler plugins export --server localhost:8080 --username admin --password admin
+$ butler plugins export --server localhost:8080
 ```
 
 ```
-$ butler plugins import --server localhost:8080 --username admin --password admin
+$ butler plugins import --server localhost:8080
 ```
 
+### Credentials Management
+
+```
+$ butler credentials decrypt --server localhost:8080 --folder foo/bar > decryptedCredentials.json
+```
+
+```
+$ cat decryptedCredentials.json | butler credentials apply --server localhost:8080 --folder bar/foo
+```
 ## Tutorials
 
 * [Butler CLI: Import/Export Jenkins Plugins & Jobs](http://www.blog.labouardy.com/butler-cli-import-export-jenkins-plugins-jobs/)
