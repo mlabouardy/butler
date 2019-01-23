@@ -262,7 +262,7 @@ func GetCrumb(host string, username string, password string) ([]string, error) {
 	}
 
 	if resp.StatusCode == 404 {
-		return []string{}, errors.New("Not found 404")
+		return []string{}, errors.New("Not found 404. Please check CSRF configuration in Global Security. Please enable with default configuration. If you still have issues, ensure your Jenkins URL is correct and try again.")
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
