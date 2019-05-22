@@ -5,10 +5,12 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"strconv"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
+	"net/url"
 )
 
 type JobList struct {
@@ -296,9 +298,11 @@ func ImportJob(name string, folderName string, server string, username string, p
 		return err
 	}
 
-	url := fmt.Sprintf("%s/createItem?name=%s", GetFolderURL(server, folderName), name)
+	// escape is mandatory if the job has special char in the name
+	name = url.PathEscape(name)
+	createURL := fmt.Sprintf("%s/createItem?name=%s", GetFolderURL(server, folderName), name)
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("POST", createURL, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		return err
 	}
@@ -324,7 +328,14 @@ func ImportJob(name string, folderName string, server string, username string, p
 	}
 
 	if resp.StatusCode != 200 {
-		return errors.New("Job couldn't not be imported: check if it is already existing and verify all plugins used in this job are installed on the target jenkins instance")
+		errorMsg := fmt.Sprintf(`Job couldn't not be imported (code %s).
+		Check if it is already existing and verify all plugins used in this job are installed on the target jenkins instance`,
+		strconv.Itoa(resp.StatusCode))
+		b, errRead := ioutil.ReadAll(resp.Body)
+		if errRead == nil {
+			errorMsg = errorMsg + fmt.Sprintf("%s", b)
+		}
+		return errors.New(errorMsg)
 	}
 
 	return nil
